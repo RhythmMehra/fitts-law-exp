@@ -2,11 +2,14 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Fitts' Law Experiment</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -128,13 +131,13 @@ button {
 
 .start-dot {
     position: absolute;
-    width: 24px;
-    height: 24px;
-    background: #d62828;
-    border: 3px solid #8b0000;
+    width: 30px;
+    height: 30px;
+    background: red;
+    border: 3px solid darkred;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    cursor: crosshair;
+    z-index: 10;
 }
 
 .target {
@@ -148,6 +151,7 @@ button {
     text-align: center;
     padding-top: 80px;
 }
+
 </style>
 
 </head>
@@ -155,6 +159,8 @@ button {
 <body>
 
 <div class="container">
+
+<!-- WELCOME -->
 
 <div id="welcome">
 
@@ -173,15 +179,25 @@ button {
             <h3>Instructions</h3>
 
             <ol>
+
                 <li>Enter your name below.</li>
+
                 <li>You will first complete 3 practice trials.</li>
+
                 <li>After practice, click the red START EXPERIMENT button.</li>
+
                 <li>A red dot will appear at the beginning of every trial.</li>
+
                 <li>Move your mouse onto the red dot.</li>
+
                 <li>A blue square will then appear.</li>
+
                 <li>Move to the blue square as quickly and accurately as possible and click it.</li>
+
                 <li>Clicking outside the blue square counts as an error.</li>
+
                 <li>A new red starting dot will automatically appear for the next trial.</li>
+
             </ol>
 
             <p>
@@ -225,6 +241,8 @@ button {
 </div>
 
 
+<!-- PRACTICE -->
+
 <div id="practice" class="hidden">
 
     <h1>Practice Round</h1>
@@ -262,6 +280,8 @@ button {
 </div>
 
 
+<!-- READY -->
+
 <div id="ready" class="hidden">
 
     <div class="card center">
@@ -293,6 +313,8 @@ button {
 
 </div>
 
+
+<!-- EXPERIMENT -->
 
 <div id="experiment" class="hidden">
 
@@ -331,6 +353,8 @@ button {
 </div>
 
 
+<!-- FINISHED -->
+
 <div id="finished" class="hidden">
 
     <h1>Experiment Complete!</h1>
@@ -367,7 +391,6 @@ const PRACTICE_TRIALS = 3;
 const DISTANCES = [300, 400, 500, 600];
 const SIZES = [64, 128, 196, 256];
 
-// +1 = left-to-right, -1 = right-to-left
 const DIRECTIONS = [1, -1];
 
 let participantName = "";
@@ -417,17 +440,8 @@ function pointDistance(
 
     return Math.sqrt(
 
-        Math.pow(
-            x2 - x1,
-            2
-        )
-
-        +
-
-        Math.pow(
-            y2 - y1,
-            2
-        )
+        Math.pow(x2 - x1, 2) +
+        Math.pow(y2 - y1, 2)
 
     );
 
@@ -438,20 +452,14 @@ function beginExperiment() {
 
     participantName =
         document
-        .getElementById(
-            "participantName"
-        )
+        .getElementById("participantName")
         .value
         .trim();
 
 
-    if (
-        participantName === ""
-    ) {
+    if (participantName === "") {
 
-        alert(
-            "Please enter your name."
-        );
+        alert("Please enter your name.");
 
         return;
 
@@ -459,17 +467,13 @@ function beginExperiment() {
 
 
     document
-        .getElementById(
-            "welcome"
-        )
+        .getElementById("welcome")
         .classList
         .add("hidden");
 
 
     document
-        .getElementById(
-            "practice"
-        )
+        .getElementById("practice")
         .classList
         .remove("hidden");
 
@@ -484,9 +488,7 @@ function beginExperiment() {
 function startPracticeTrial() {
 
     document
-        .getElementById(
-            "practiceProgress"
-        )
+        .getElementById("practiceProgress")
         .innerText =
         "Practice Trial " +
         (practiceNumber + 1) +
@@ -495,10 +497,60 @@ function startPracticeTrial() {
 
 
     prepareTrial(
-        document.getElementById(
-            "practiceArea"
-        ),
+        document.getElementById("practiceArea"),
         true
+    );
+
+}
+
+
+function startActualExperiment() {
+
+    document
+        .getElementById("ready")
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById("experiment")
+        .classList
+        .remove("hidden");
+
+
+    trialNumber = 0;
+
+    startExperimentalTrial();
+
+}
+
+
+function startExperimentalTrial() {
+
+    if (trialNumber >= TOTAL_TRIALS) {
+
+        finishExperiment();
+
+        return;
+
+    }
+
+
+    trialNumber++;
+
+
+    document
+        .getElementById("trialProgress")
+        .innerText =
+        "Trial " +
+        trialNumber +
+        " / " +
+        TOTAL_TRIALS;
+
+
+    prepareTrial(
+        document.getElementById("experimentArea"),
+        false
     );
 
 }
@@ -520,33 +572,23 @@ function prepareTrial(
     distanceTraveled = 0;
 
     currentDistance =
-        randomChoice(
-            DISTANCES
-        );
+        randomChoice(DISTANCES);
 
     currentSize =
-        randomChoice(
-            SIZES
-        );
+        randomChoice(SIZES);
 
     currentDirection =
-        randomChoice(
-            DIRECTIONS
-        );
+        randomChoice(DIRECTIONS);
 
 
     if (practice) {
 
         document
-            .getElementById(
-                "practiceErrors"
-            )
+            .getElementById("practiceErrors")
             .innerText = "0";
 
         document
-            .getElementById(
-                "practiceMessage"
-            )
+            .getElementById("practiceMessage")
             .innerText =
             "Move your mouse onto the red dot.";
 
@@ -555,15 +597,11 @@ function prepareTrial(
     else {
 
         document
-            .getElementById(
-                "errorCount"
-            )
+            .getElementById("errorCount")
             .innerText = "0";
 
         document
-            .getElementById(
-                "message"
-            )
+            .getElementById("message")
             .innerText =
             "Move your mouse onto the red dot.";
 
@@ -609,61 +647,33 @@ function createStartDot() {
     const height =
         activeArea.clientHeight;
 
-    const margin = 40;
+    const margin = 45;
 
     let valid = false;
 
+    let x = 0;
+    let y = 0;
+
 
     for (
-        let attempt = 0;
-        attempt < 3000;
-        attempt++
+        let i = 0;
+        i < 5000;
+        i++
     ) {
 
-        let x;
-        let y;
-
-
-        if (
-            currentDirection === 1
-        ) {
-
-            x =
-                margin +
-                Math.random() *
-                Math.max(
-                    1,
-                    width -
-                    currentDistance -
-                    currentSize -
-                    margin * 2
-                );
-
-        }
-
-        else {
-
-            x =
-                currentDistance +
-                currentSize +
-                margin +
-                Math.random() *
-                Math.max(
-                    1,
-                    width -
-                    currentDistance -
-                    currentSize -
-                    margin * 2
-                );
-
-        }
+        x =
+            margin +
+            Math.random() *
+            (
+                width -
+                margin * 2
+            );
 
 
         y =
             margin +
             Math.random() *
-            Math.max(
-                1,
+            (
                 height -
                 margin * 2
             );
@@ -671,51 +681,81 @@ function createStartDot() {
 
         if (
             currentDirection === 1
-            &&
-            x +
-            currentDistance +
-            currentSize / 2
-            <=
-            width -
-            margin
         ) {
 
-            valid = true;
+            if (
+                x +
+                currentDistance +
+                currentSize / 2
+                <=
+                width - margin
+            ) {
+
+                valid = true;
+
+                break;
+
+            }
 
         }
 
+        else {
 
-        if (
-            currentDirection === -1
-            &&
-            x -
-            currentDistance -
-            currentSize / 2
-            >=
-            margin
-        ) {
+            if (
+                x -
+                currentDistance -
+                currentSize / 2
+                >=
+                margin
+            ) {
 
-            valid = true;
+                valid = true;
 
-        }
+                break;
 
-
-        if (valid) {
-
-            startX = x;
-            startY = y;
-
-            break;
+            }
 
         }
 
     }
 
 
+    if (!valid) {
+
+        if (
+            currentDirection === 1
+        ) {
+
+            x =
+                width -
+                currentDistance -
+                currentSize / 2 -
+                margin;
+
+        }
+
+        else {
+
+            x =
+                currentDistance +
+                currentSize / 2 +
+                margin;
+
+        }
+
+
+        y =
+            height / 2;
+
+    }
+
+
+    startX = x;
+    startY = y;
+
+
     startDot =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     startDot.className =
@@ -742,9 +782,7 @@ function checkStartPoint(
     practice
 ) {
 
-    if (
-        targetElement
-    ) {
+    if (targetElement) {
 
         return;
 
@@ -752,8 +790,7 @@ function checkStartPoint(
 
 
     const rect =
-        activeArea
-        .getBoundingClientRect();
+        activeArea.getBoundingClientRect();
 
 
     const mouseX =
@@ -776,18 +813,34 @@ function checkStartPoint(
 
 
     if (
-        distanceFromStart <= 12
+        distanceFromStart <= 15
     ) {
 
         activeArea.onmousemove = null;
 
+
+        if (startDot) {
+
+            startDot.remove();
+
+            startDot = null;
+
+        }
+
+
         createTarget();
+
 
         startTime =
             performance.now();
 
-        lastMouseX = startX;
-        lastMouseY = startY;
+
+        lastMouseX =
+            startX;
+
+        lastMouseY =
+            startY;
+
 
         distanceTraveled = 0;
 
@@ -795,9 +848,7 @@ function checkStartPoint(
         if (practice) {
 
             document
-                .getElementById(
-                    "practiceMessage"
-                )
+                .getElementById("practiceMessage")
                 .innerText =
                 "Move to the blue square and click it.";
 
@@ -806,9 +857,7 @@ function checkStartPoint(
         else {
 
             document
-                .getElementById(
-                    "message"
-                )
+                .getElementById("message")
                 .innerText =
                 "Move to the blue square and click it.";
 
@@ -818,9 +867,7 @@ function checkStartPoint(
         activeArea.onmousemove =
             function(event) {
 
-                trackMouseMovement(
-                    event
-                );
+                trackMouseMovement(event);
 
             };
 
@@ -845,7 +892,7 @@ function createTarget() {
 
     for (
         let attempt = 0;
-        attempt < 3000;
+        attempt < 5000;
         attempt++
     ) {
 
@@ -954,9 +1001,7 @@ function createTarget() {
 
 
     targetElement =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     targetElement.className =
@@ -992,13 +1037,9 @@ function createTarget() {
 }
 
 
-function trackMouseMovement(
-    event
-) {
+function trackMouseMovement(event) {
 
-    if (
-        !targetElement
-    ) {
+    if (!targetElement) {
 
         return;
 
@@ -1006,8 +1047,7 @@ function trackMouseMovement(
 
 
     const rect =
-        activeArea
-        .getBoundingClientRect();
+        activeArea.getBoundingClientRect();
 
 
     const x =
@@ -1040,9 +1080,7 @@ function handleTargetClick(
     practice
 ) {
 
-    if (
-        !targetElement
-    ) {
+    if (!targetElement) {
 
         return;
 
@@ -1050,8 +1088,7 @@ function handleTargetClick(
 
 
     const rect =
-        activeArea
-        .getBoundingClientRect();
+        activeArea.getBoundingClientRect();
 
 
     const x =
@@ -1086,12 +1123,9 @@ function handleTargetClick(
 
     const correct =
 
-        x >= left
-        &&
-        x <= right
-        &&
-        y >= top
-        &&
+        x >= left &&
+        x <= right &&
+        y >= top &&
         y <= bottom;
 
 
@@ -1103,9 +1137,7 @@ function handleTargetClick(
         if (practice) {
 
             document
-                .getElementById(
-                    "practiceErrors"
-                )
+                .getElementById("practiceErrors")
                 .innerText =
                 errors;
 
@@ -1114,13 +1146,12 @@ function handleTargetClick(
         else {
 
             document
-                .getElementById(
-                    "errorCount"
-                )
+                .getElementById("errorCount")
                 .innerText =
                 errors;
 
         }
+
 
         return;
 
@@ -1162,8 +1193,22 @@ function finishPracticeTrial() {
     activeArea.onmousedown = null;
 
 
-    targetElement = null;
-    startDot = null;
+    if (startDot) {
+
+        startDot.remove();
+
+        startDot = null;
+
+    }
+
+
+    if (targetElement) {
+
+        targetElement.remove();
+
+        targetElement = null;
+
+    }
 
 
     if (
@@ -1172,17 +1217,13 @@ function finishPracticeTrial() {
     ) {
 
         document
-            .getElementById(
-                "practice"
-            )
+            .getElementById("practice")
             .classList
             .add("hidden");
 
 
         document
-            .getElementById(
-                "ready"
-            )
+            .getElementById("ready")
             .classList
             .remove("hidden");
 
@@ -1198,74 +1239,7 @@ function finishPracticeTrial() {
             startPracticeTrial();
 
         },
-        300
-    );
-
-}
-
-
-function startActualExperiment() {
-
-    document
-        .getElementById(
-            "ready"
-        )
-        .classList
-        .add("hidden");
-
-
-    document
-        .getElementById(
-            "experiment"
-        )
-        .classList
-        .remove("hidden");
-
-
-    trialNumber = 0;
-
-
-    startExperimentalTrial();
-
-}
-
-
-function startExperimentalTrial() {
-
-    if (
-        trialNumber >=
-        TOTAL_TRIALS
-    ) {
-
-        finishExperiment();
-
-        return;
-
-    }
-
-
-    trialNumber++;
-
-
-    document
-        .getElementById(
-            "trialProgress"
-        )
-        .innerText =
-        "Trial " +
-        trialNumber +
-        " / " +
-        TOTAL_TRIALS;
-
-
-    prepareTrial(
-
-        document.getElementById(
-            "experimentArea"
-        ),
-
-        false
-
+        400
     );
 
 }
@@ -1317,8 +1291,22 @@ function finishExperimentalTrial(
     activeArea.onmousedown = null;
 
 
-    targetElement = null;
-    startDot = null;
+    if (startDot) {
+
+        startDot.remove();
+
+        startDot = null;
+
+    }
+
+
+    if (targetElement) {
+
+        targetElement.remove();
+
+        targetElement = null;
+
+    }
 
 
     setTimeout(
@@ -1327,7 +1315,7 @@ function finishExperimentalTrial(
             startExperimentalTrial();
 
         },
-        300
+        400
     );
 
 }
@@ -1363,7 +1351,7 @@ function sendData(row) {
         function() {
 
             console.log(
-                "Trial sent successfully:",
+                "Trial sent:",
                 row
             );
 
@@ -1387,17 +1375,13 @@ function sendData(row) {
 function finishExperiment() {
 
     document
-        .getElementById(
-            "experiment"
-        )
+        .getElementById("experiment")
         .classList
         .add("hidden");
 
 
     document
-        .getElementById(
-            "finished"
-        )
+        .getElementById("finished")
         .classList
         .remove("hidden");
 
