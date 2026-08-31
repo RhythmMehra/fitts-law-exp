@@ -4,11 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Fitts' Law Experiment</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
@@ -128,6 +126,17 @@ button {
     cursor: crosshair;
 }
 
+.start-dot {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: #d62828;
+    border: 3px solid #8b0000;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: crosshair;
+}
+
 .target {
     position: absolute;
     background: #2864dc;
@@ -135,16 +144,10 @@ button {
     cursor: crosshair;
 }
 
-.start-screen {
-    text-align: center;
-    padding: 40px;
-}
-
 #finished {
     text-align: center;
     padding-top: 80px;
 }
-
 </style>
 
 </head>
@@ -152,11 +155,6 @@ button {
 <body>
 
 <div class="container">
-
-
-<!-- =====================================================
-     WELCOME
-===================================================== -->
 
 <div id="welcome">
 
@@ -175,57 +173,26 @@ button {
             <h3>Instructions</h3>
 
             <ol>
-
-                <li>
-                    Enter your name below.
-                </li>
-
-                <li>
-                    You will first complete 3 practice trials.
-                </li>
-
-                <li>
-                    After the practice round, click the red
-                    <strong>START EXPERIMENT</strong> button.
-                </li>
-
-                <li>
-                    During the experiment, a blue square will
-                    appear automatically.
-                </li>
-
-                <li>
-                    Move to the blue square as quickly and
-                    accurately as possible.
-                </li>
-
-                <li>
-                    Click the blue square.
-                </li>
-
-                <li>
-                    The next target will appear automatically
-                    after each successful click.
-                </li>
-
-                <li>
-                    Clicking outside the blue square counts
-                    as an error.
-                </li>
-
+                <li>Enter your name below.</li>
+                <li>You will first complete 3 practice trials.</li>
+                <li>After practice, click the red START EXPERIMENT button.</li>
+                <li>A red dot will appear at the beginning of every trial.</li>
+                <li>Move your mouse onto the red dot.</li>
+                <li>A blue square will then appear.</li>
+                <li>Move to the blue square as quickly and accurately as possible and click it.</li>
+                <li>Clicking outside the blue square counts as an error.</li>
+                <li>A new red starting dot will automatically appear for the next trial.</li>
             </ol>
 
             <p>
                 <strong>
-                    Please use a laptop or desktop with a
-                    mouse or trackpad.
+                    Please use a laptop or desktop with a mouse or trackpad.
                 </strong>
             </p>
 
             <p>
                 <strong>
-                    Please do not refresh or close the page
-                    during the experiment.
+                    Please do not refresh or close the page during the experiment.
                 </strong>
             </p>
 
@@ -258,10 +225,6 @@ button {
 </div>
 
 
-<!-- =====================================================
-     PRACTICE
-===================================================== -->
-
 <div id="practice" class="hidden">
 
     <h1>Practice Round</h1>
@@ -287,35 +250,23 @@ button {
 
     </div>
 
-    <div
-        id="practiceMessage"
-    >
-        Follow the target and click the blue square.
+    <div id="practiceMessage">
+        Move your mouse onto the red dot.
     </div>
 
     <div
         id="practiceArea"
         class="experiment-area"
-    >
-    </div>
+    ></div>
 
 </div>
 
 
-<!-- =====================================================
-     READY SCREEN
-===================================================== -->
+<div id="ready" class="hidden">
 
-<div
-    id="ready"
-    class="hidden"
->
+    <div class="card center">
 
-    <div class="card start-screen">
-
-        <h1>
-            Practice Complete!
-        </h1>
+        <h1>Practice Complete!</h1>
 
         <p>
             You are now ready for the actual experiment.
@@ -343,10 +294,6 @@ button {
 </div>
 
 
-<!-- =====================================================
-     EXPERIMENT
-===================================================== -->
-
 <div id="experiment" class="hidden">
 
     <h1>Fitts' Law Experiment</h1>
@@ -373,30 +320,20 @@ button {
     </div>
 
     <div id="message">
-        Move to the blue square.
+        Move your mouse onto the red dot.
     </div>
 
     <div
         id="experimentArea"
         class="experiment-area"
-    >
-    </div>
+    ></div>
 
 </div>
 
 
-<!-- =====================================================
-     FINISHED
-===================================================== -->
+<div id="finished" class="hidden">
 
-<div
-    id="finished"
-    class="hidden"
->
-
-    <h1>
-        Experiment Complete!
-    </h1>
+    <h1>Experiment Complete!</h1>
 
     <div class="card">
 
@@ -416,101 +353,49 @@ button {
 
 </div>
 
-
 </div>
 
 
 <script>
 
-
-// ==========================================================
-// GOOGLE APPS SCRIPT
-// ==========================================================
-
 const DATA_URL =
 "https://script.google.com/macros/s/AKfycbwVZSm5Fj29qpTdD2gyqjfu6tdHBgrFGJWgtCZI_3jcu3gVjQo9ZyUmHjLsS7I-lDAwIQ/exec";
 
-
-// ==========================================================
-// SETTINGS
-// ==========================================================
-
 const TOTAL_TRIALS = 100;
-
 const PRACTICE_TRIALS = 3;
 
+const DISTANCES = [300, 400, 500, 600];
+const SIZES = [64, 128, 196, 256];
 
-// Four distances
-
-const DISTANCES = [
-    300,
-    400,
-    500,
-    600
-];
-
-
-// Four sizes
-
-const SIZES = [
-    64,
-    128,
-    196,
-    256
-];
-
-
-// +1 = Left-to-Right
-// -1 = Right-to-Left
-
-const DIRECTIONS = [
-    1,
-    -1
-];
-
-
-// ==========================================================
-// GLOBAL VARIABLES
-// ==========================================================
+// +1 = left-to-right, -1 = right-to-left
+const DIRECTIONS = [1, -1];
 
 let participantName = "";
-
 let trialNumber = 0;
-
 let practiceNumber = 0;
 
 let currentDistance = 0;
-
 let currentSize = 0;
-
 let currentDirection = 0;
 
 let startX = 0;
-
 let startY = 0;
 
 let targetX = 0;
-
 let targetY = 0;
 
 let activeArea = null;
-
+let startDot = null;
 let targetElement = null;
 
 let startTime = 0;
 
 let lastMouseX = null;
-
 let lastMouseY = null;
 
 let distanceTraveled = 0;
-
 let errors = 0;
 
-
-// ==========================================================
-// RANDOM CHOICE
-// ==========================================================
 
 function randomChoice(array) {
 
@@ -522,10 +407,6 @@ function randomChoice(array) {
 
 }
 
-
-// ==========================================================
-// POINT DISTANCE
-// ==========================================================
 
 function pointDistance(
     x1,
@@ -552,10 +433,6 @@ function pointDistance(
 
 }
 
-
-// ==========================================================
-// BEGIN
-// ==========================================================
 
 function beginExperiment() {
 
@@ -604,10 +481,6 @@ function beginExperiment() {
 }
 
 
-// ==========================================================
-// START PRACTICE
-// ==========================================================
-
 function startPracticeTrial() {
 
     document
@@ -631,10 +504,6 @@ function startPracticeTrial() {
 }
 
 
-// ==========================================================
-// PREPARE TRIAL
-// ==========================================================
-
 function prepareTrial(
     area,
     practice
@@ -642,40 +511,29 @@ function prepareTrial(
 
     activeArea = area;
 
-    area.innerHTML = "";
+    activeArea.innerHTML = "";
 
+    startDot = null;
     targetElement = null;
 
     errors = 0;
-
     distanceTraveled = 0;
-
-
-    /*
-       Randomize trial conditions.
-    */
 
     currentDistance =
         randomChoice(
             DISTANCES
         );
 
-
     currentSize =
         randomChoice(
             SIZES
         );
-
 
     currentDirection =
         randomChoice(
             DIRECTIONS
         );
 
-
-    /*
-       Reset error display.
-    */
 
     if (practice) {
 
@@ -684,6 +542,13 @@ function prepareTrial(
                 "practiceErrors"
             )
             .innerText = "0";
+
+        document
+            .getElementById(
+                "practiceMessage"
+            )
+            .innerText =
+            "Move your mouse onto the red dot.";
 
     }
 
@@ -695,22 +560,23 @@ function prepareTrial(
             )
             .innerText = "0";
 
+        document
+            .getElementById(
+                "message"
+            )
+            .innerText =
+            "Move your mouse onto the red dot.";
+
     }
 
 
-    /*
-       Wait for participant to move into
-       the experiment area.
+    createStartDot();
 
-       This only happens at the beginning
-       of a trial. After clicking a target,
-       the next trial is positioned automatically.
-    */
 
-    area.onmousemove =
+    activeArea.onmousemove =
         function(event) {
 
-            establishStartingPoint(
+            checkStartPoint(
                 event,
                 practice
             );
@@ -718,34 +584,171 @@ function prepareTrial(
         };
 
 
-    area.onmousedown =
+    activeArea.onmousedown =
         function(event) {
 
-            handleMouseClick(
-                event,
-                practice
-            );
+            if (targetElement) {
+
+                handleTargetClick(
+                    event,
+                    practice
+                );
+
+            }
 
         };
 
 }
 
 
-// ==========================================================
-// ESTABLISH STARTING POINT
-// ==========================================================
+function createStartDot() {
 
-function establishStartingPoint(
+    const width =
+        activeArea.clientWidth;
+
+    const height =
+        activeArea.clientHeight;
+
+    const margin = 40;
+
+    let valid = false;
+
+
+    for (
+        let attempt = 0;
+        attempt < 3000;
+        attempt++
+    ) {
+
+        let x;
+        let y;
+
+
+        if (
+            currentDirection === 1
+        ) {
+
+            x =
+                margin +
+                Math.random() *
+                Math.max(
+                    1,
+                    width -
+                    currentDistance -
+                    currentSize -
+                    margin * 2
+                );
+
+        }
+
+        else {
+
+            x =
+                currentDistance +
+                currentSize +
+                margin +
+                Math.random() *
+                Math.max(
+                    1,
+                    width -
+                    currentDistance -
+                    currentSize -
+                    margin * 2
+                );
+
+        }
+
+
+        y =
+            margin +
+            Math.random() *
+            Math.max(
+                1,
+                height -
+                margin * 2
+            );
+
+
+        if (
+            currentDirection === 1
+            &&
+            x +
+            currentDistance +
+            currentSize / 2
+            <=
+            width -
+            margin
+        ) {
+
+            valid = true;
+
+        }
+
+
+        if (
+            currentDirection === -1
+            &&
+            x -
+            currentDistance -
+            currentSize / 2
+            >=
+            margin
+        ) {
+
+            valid = true;
+
+        }
+
+
+        if (valid) {
+
+            startX = x;
+            startY = y;
+
+            break;
+
+        }
+
+    }
+
+
+    startDot =
+        document.createElement(
+            "div"
+        );
+
+
+    startDot.className =
+        "start-dot";
+
+
+    startDot.style.left =
+        startX + "px";
+
+
+    startDot.style.top =
+        startY + "px";
+
+
+    activeArea.appendChild(
+        startDot
+    );
+
+}
+
+
+function checkStartPoint(
     event,
     practice
 ) {
 
-    /*
-       Remove this handler immediately so the
-       starting point is recorded only once.
-    */
+    if (
+        targetElement
+    ) {
 
-    activeArea.onmousemove = null;
+        return;
+
+    }
 
 
     const rect =
@@ -753,117 +756,80 @@ function establishStartingPoint(
         .getBoundingClientRect();
 
 
-    /*
-       Current mouse position becomes the
-       starting position.
-    */
-
-    startX =
+    const mouseX =
         event.clientX -
         rect.left;
 
 
-    startY =
+    const mouseY =
         event.clientY -
         rect.top;
 
 
-    /*
-       Find target exactly currentDistance
-       pixels away.
-    */
+    const distanceFromStart =
+        pointDistance(
+            mouseX,
+            mouseY,
+            startX,
+            startY
+        );
 
-    const success =
-        findTargetPosition();
+
+    if (
+        distanceFromStart <= 12
+    ) {
+
+        activeArea.onmousemove = null;
+
+        createTarget();
+
+        startTime =
+            performance.now();
+
+        lastMouseX = startX;
+        lastMouseY = startY;
+
+        distanceTraveled = 0;
 
 
-    if (!success) {
+        if (practice) {
+
+            document
+                .getElementById(
+                    "practiceMessage"
+                )
+                .innerText =
+                "Move to the blue square and click it.";
+
+        }
+
+        else {
+
+            document
+                .getElementById(
+                    "message"
+                )
+                .innerText =
+                "Move to the blue square and click it.";
+
+        }
+
 
         activeArea.onmousemove =
             function(event) {
 
-                establishStartingPoint(
-                    event,
-                    practice
+                trackMouseMovement(
+                    event
                 );
 
             };
 
-        return;
-
     }
-
-
-    /*
-       Show target.
-    */
-
-    showTarget();
-
-
-    /*
-       Start timer immediately when target
-       appears.
-    */
-
-    startTime =
-        performance.now();
-
-
-    /*
-       Start trajectory measurement from
-       actual starting position.
-    */
-
-    lastMouseX = startX;
-
-    lastMouseY = startY;
-
-
-    if (practice) {
-
-        document
-            .getElementById(
-                "practiceMessage"
-            )
-            .innerText =
-            "Click the blue square!";
-
-    }
-
-    else {
-
-        document
-            .getElementById(
-                "message"
-            )
-            .innerText =
-            "Click the blue square!";
-
-    }
-
-
-    /*
-       Track mouse trajectory.
-    */
-
-    activeArea.onmousemove =
-        function(event) {
-
-            trackMouseMovement(
-                event
-            );
-
-        };
 
 }
 
 
-// ==========================================================
-// FIND TARGET POSITION
-// ==========================================================
-
-function findTargetPosition() {
+function createTarget() {
 
     const width =
         activeArea.clientWidth;
@@ -874,17 +840,12 @@ function findTargetPosition() {
     const radius =
         currentSize / 2;
 
+    let found = false;
 
-    /*
-       Try many random angles.
-
-       Direction controls the horizontal
-       direction of movement.
-    */
 
     for (
         let attempt = 0;
-        attempt < 2000;
+        attempt < 3000;
         attempt++
     ) {
 
@@ -895,11 +856,6 @@ function findTargetPosition() {
             currentDirection === 1
         ) {
 
-            /*
-               Left-to-right:
-               angle between -90° and +90°.
-            */
-
             angle =
                 (
                     Math.random() -
@@ -909,10 +865,6 @@ function findTargetPosition() {
         }
 
         else {
-
-            /*
-               Right-to-left.
-            */
 
             angle =
                 Math.PI +
@@ -942,11 +894,6 @@ function findTargetPosition() {
             startY + dy;
 
 
-        /*
-           Target must be completely inside
-           the experiment area.
-        */
-
         if (
 
             candidateX - radius >= 0
@@ -971,46 +918,40 @@ function findTargetPosition() {
             targetY =
                 candidateY;
 
+            found = true;
 
-            /*
-               Verify exact distance.
-            */
-
-            const verifiedDistance =
-                pointDistance(
-                    startX,
-                    startY,
-                    targetX,
-                    targetY
-                );
-
-
-            if (
-                Math.abs(
-                    verifiedDistance -
-                    currentDistance
-                ) < 0.01
-            ) {
-
-                return true;
-
-            }
+            break;
 
         }
 
     }
 
 
-    return false;
+    if (!found) {
 
-}
+        if (
+            currentDirection === 1
+        ) {
 
+            targetX =
+                startX +
+                currentDistance;
 
-// ==========================================================
-// SHOW TARGET
-// ==========================================================
+        }
 
-function showTarget() {
+        else {
+
+            targetX =
+                startX -
+                currentDistance;
+
+        }
+
+        targetY =
+            startY;
+
+    }
+
 
     targetElement =
         document.createElement(
@@ -1051,13 +992,18 @@ function showTarget() {
 }
 
 
-// ==========================================================
-// TRACK MOUSE MOVEMENT
-// ==========================================================
-
 function trackMouseMovement(
     event
 ) {
+
+    if (
+        !targetElement
+    ) {
+
+        return;
+
+    }
+
 
     const rect =
         activeArea
@@ -1074,11 +1020,6 @@ function trackMouseMovement(
         rect.top;
 
 
-    /*
-       Add this movement segment to
-       Distance Traveled.
-    */
-
     distanceTraveled +=
         pointDistance(
             lastMouseX,
@@ -1089,17 +1030,12 @@ function trackMouseMovement(
 
 
     lastMouseX = x;
-
     lastMouseY = y;
 
 }
 
 
-// ==========================================================
-// HANDLE CLICK
-// ==========================================================
-
-function handleMouseClick(
+function handleTargetClick(
     event,
     practice
 ) {
@@ -1128,10 +1064,6 @@ function handleMouseClick(
         rect.top;
 
 
-    /*
-       Target boundaries.
-    */
-
     const left =
         targetX -
         currentSize / 2;
@@ -1153,6 +1085,7 @@ function handleMouseClick(
 
 
     const correct =
+
         x >= left
         &&
         x <= right
@@ -1161,10 +1094,6 @@ function handleMouseClick(
         &&
         y <= bottom;
 
-
-    /*
-       WRONG CLICK
-    */
 
     if (!correct) {
 
@@ -1193,15 +1122,10 @@ function handleMouseClick(
 
         }
 
-
         return;
 
     }
 
-
-    /*
-       CORRECT CLICK
-    */
 
     const endTime =
         performance.now();
@@ -1212,59 +1136,22 @@ function handleMouseClick(
         startTime;
 
 
-    /*
-       Save the mouse position where
-       the target was successfully clicked.
-
-       This becomes the starting position
-       for the NEXT trial.
-
-       Therefore the participant does not
-       need to move into the experiment
-       area again.
-    */
-
-    const nextStartX =
-        x;
-
-
-    const nextStartY =
-        y;
-
-
-    /*
-       Finish practice.
-    */
-
     if (practice) {
 
         finishPracticeTrial();
 
-        return;
+    }
+
+    else {
+
+        finishExperimentalTrial(
+            movementTime
+        );
 
     }
 
-
-    /*
-       Record actual trial.
-    */
-
-    finishExperimentalTrial(
-
-        movementTime,
-
-        nextStartX,
-
-        nextStartY
-
-    );
-
 }
 
-
-// ==========================================================
-// FINISH PRACTICE
-// ==========================================================
 
 function finishPracticeTrial() {
 
@@ -1272,11 +1159,11 @@ function finishPracticeTrial() {
 
 
     activeArea.onmousemove = null;
-
     activeArea.onmousedown = null;
 
 
     targetElement = null;
+    startDot = null;
 
 
     if (
@@ -1305,26 +1192,17 @@ function finishPracticeTrial() {
     }
 
 
-    /*
-       Automatically start next practice
-       trial after a short pause.
-    */
-
     setTimeout(
         function() {
 
             startPracticeTrial();
 
         },
-        250
+        300
     );
 
 }
 
-
-// ==========================================================
-// START ACTUAL EXPERIMENT
-// ==========================================================
 
 function startActualExperiment() {
 
@@ -1347,27 +1225,12 @@ function startActualExperiment() {
     trialNumber = 0;
 
 
-    /*
-       The participant is already somewhere
-       on the experiment page.
-
-       We use their next mouse movement
-       as the starting position for Trial 1.
-    */
-
     startExperimentalTrial();
 
 }
 
 
-// ==========================================================
-// START EXPERIMENTAL TRIAL
-// ==========================================================
-
-function startExperimentalTrial(
-    previousX = null,
-    previousY = null
-) {
+function startExperimentalTrial() {
 
     if (
         trialNumber >=
@@ -1395,296 +1258,22 @@ function startExperimentalTrial(
         TOTAL_TRIALS;
 
 
-    /*
-       If a previous target was clicked,
-       immediately use that click position
-       as the starting point.
+    prepareTrial(
 
-       Otherwise wait for the participant's
-       first movement.
-    */
-
-    if (
-        previousX !== null
-        &&
-        previousY !== null
-    ) {
-
-        prepareAutomaticTrial(
-            previousX,
-            previousY
-        );
-
-    }
-
-    else {
-
-        prepareFirstTrial();
-
-    }
-
-}
-
-
-// ==========================================================
-// FIRST ACTUAL TRIAL
-// ==========================================================
-
-function prepareFirstTrial() {
-
-    activeArea =
-        document
-        .getElementById(
+        document.getElementById(
             "experimentArea"
-        );
+        ),
 
+        false
 
-    activeArea.innerHTML = "";
-
-
-    targetElement = null;
-
-
-    errors = 0;
-
-    distanceTraveled = 0;
-
-
-    currentDistance =
-        randomChoice(
-            DISTANCES
-        );
-
-
-    currentSize =
-        randomChoice(
-            SIZES
-        );
-
-
-    currentDirection =
-        randomChoice(
-            DIRECTIONS
-        );
-
-
-    document
-        .getElementById(
-            "errorCount"
-        )
-        .innerText = "0";
-
-
-    document
-        .getElementById(
-            "message"
-        )
-        .innerText =
-        "Move your mouse into the experiment area.";
-
-
-    /*
-       First mouse movement establishes
-       Trial 1 starting point.
-    */
-
-    activeArea.onmousemove =
-        function(event) {
-
-            establishStartingPoint(
-                event,
-                false
-            );
-
-        };
-
-
-    activeArea.onmousedown =
-        function(event) {
-
-            handleMouseClick(
-                event,
-                false
-            );
-
-        };
+    );
 
 }
 
-
-// ==========================================================
-// AUTOMATIC NEXT TRIAL
-// ==========================================================
-
-function prepareAutomaticTrial(
-    previousX,
-    previousY
-) {
-
-    activeArea =
-        document
-        .getElementById(
-            "experimentArea"
-        );
-
-
-    activeArea.innerHTML = "";
-
-
-    targetElement = null;
-
-
-    errors = 0;
-
-    distanceTraveled = 0;
-
-
-    /*
-       Randomize next trial.
-    */
-
-    currentDistance =
-        randomChoice(
-            DISTANCES
-        );
-
-
-    currentSize =
-        randomChoice(
-            SIZES
-        );
-
-
-    currentDirection =
-        randomChoice(
-            DIRECTIONS
-        );
-
-
-    document
-        .getElementById(
-            "errorCount"
-        )
-        .innerText = "0";
-
-
-    document
-        .getElementById(
-            "message"
-        )
-        .innerText =
-        "Click the blue square!";
-
-
-    /*
-       The previous successful click is
-       the new starting point.
-    */
-
-    startX =
-        previousX;
-
-    startY =
-        previousY;
-
-
-    /*
-       Find target.
-    */
-
-    const success =
-        findTargetPosition();
-
-
-    if (!success) {
-
-        /*
-           If target placement fails, retry.
-        */
-
-        setTimeout(
-            function() {
-
-                prepareAutomaticTrial(
-                    previousX,
-                    previousY
-                );
-
-            },
-            50
-        );
-
-        return;
-
-    }
-
-
-    /*
-       Show target.
-    */
-
-    showTarget();
-
-
-    /*
-       Start timer.
-    */
-
-    startTime =
-        performance.now();
-
-
-    /*
-       Start path measurement.
-    */
-
-    lastMouseX =
-        startX;
-
-    lastMouseY =
-        startY;
-
-
-    /*
-       Track mouse movement.
-    */
-
-    activeArea.onmousemove =
-        function(event) {
-
-            trackMouseMovement(
-                event
-            );
-
-        };
-
-
-    activeArea.onmousedown =
-        function(event) {
-
-            handleMouseClick(
-                event,
-                false
-            );
-
-        };
-
-}
-
-
-// ==========================================================
-// FINISH EXPERIMENTAL TRIAL
-// ==========================================================
 
 function finishExperimentalTrial(
-    movementTime,
-    nextStartX,
-    nextStartY
+    movementTime
 ) {
-
-    /*
-       Create dataset row.
-    */
 
     const row = {
 
@@ -1721,55 +1310,35 @@ function finishExperimentalTrial(
     };
 
 
-    /*
-       Automatically send data.
-    */
-
     sendData(row);
 
 
-    /*
-       Remove current target.
-    */
-
     activeArea.onmousemove = null;
-
     activeArea.onmousedown = null;
 
+
     targetElement = null;
+    startDot = null;
 
-
-    /*
-       Automatically start the next trial.
-
-       IMPORTANT:
-       The previous successful click position
-       becomes the starting point.
-    */
 
     setTimeout(
         function() {
 
-            startExperimentalTrial(
-                nextStartX,
-                nextStartY
-            );
+            startExperimentalTrial();
 
         },
-        150
+        300
     );
 
 }
 
 
-// ==========================================================
-// SEND DATA TO GOOGLE SHEETS
-// ==========================================================
-
 function sendData(row) {
 
     fetch(
+
         DATA_URL,
+
         {
 
             method: "POST",
@@ -1787,7 +1356,9 @@ function sendData(row) {
                 JSON.stringify(row)
 
         }
+
     )
+
     .then(
         function() {
 
@@ -1798,6 +1369,7 @@ function sendData(row) {
 
         }
     )
+
     .catch(
         function(error) {
 
@@ -1811,10 +1383,6 @@ function sendData(row) {
 
 }
 
-
-// ==========================================================
-// FINISH
-// ==========================================================
 
 function finishExperiment() {
 
