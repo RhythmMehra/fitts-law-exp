@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fitts' Law Experiment</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.10);
+    max-width: 800px;
+    margin: 30px auto;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    font-size: 18px;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+}
+
+button {
+    padding: 13px 25px;
+    font-size: 17px;
+    border: none;
+    border-radius: 7px;
+    background: #2864dc;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e4fb3;
+}
+
+.center {
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.instructions {
+    line-height: 1.6;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+.error {
+    color: #c62828;
+    font-weight: bold;
+}
+
+#experimentArea {
+    width: 100%;
+    max-width: 1000px;
+    height: 550px;
+    margin: 20px auto;
+    background: white;
+    border: 2px solid #bbb;
+    position: relative;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+#startMarker {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #555;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#target {
+    position: absolute;
+    background: #2864dc;
+    border: 2px solid #17489c;
+    cursor: crosshair;
+}
+
+#message {
+    text-align: center;
+    font-size: 18px;
+    margin: 10px;
+    min-height: 25px;
+}
+
+#finished {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.progress {
+    text-align: center;
+    font-size: 17px;
+    margin: 10px;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<!-- =====================================================
+     WELCOME SCREEN
+====================================================== -->
+
+<div id="welcome">
+
+    <div class="card">
+
+        <h1>Fitts' Law Experiment</h1>
+
+        <div class="instructions">
+
+            <p>
+                This experiment investigates how target size
+                and target distance affect mouse movement time.
+            </p>
+
+            <h3>Instructions</h3>
+
+            <ol>
+
+                <li>
+                    You will first complete 10 practice trials.
+                </li>
+
+                <li>
+                    The practice trials will not be recorded.
+                </li>
+
+                <li>
+                    You will then complete 100 experimental trials.
+                </li>
+
+                <li>
+                    A small grey dot will indicate where to
+                    position your mouse.
+                </li>
+
+                <li>
+                    Move your mouse onto the grey dot.
+                </li>
+
+                <li>
+                    Once the blue target appears, move to it
+                    as quickly and accurately as possible.
+                </li>
+
+                <li>
+                    Clicking outside the blue target counts
+                    as an error.
+                </li>
+
+                <li>
+                    Try to move directly toward the target.
+                </li>
+
+            </ol>
+
+            <p>
+                <strong>
+                    Please do not refresh or close the page
+                    during the experiment.
+                </strong>
+            </p>
+
+            <label>
+                <strong>Participant ID</strong>
+            </label>
+
+            <input
+                type="text"
+                id="participantID"
+                placeholder="Example: P01"
+                maxlength="20"
+            >
+
+            <div class="center">
+
+                <button onclick="beginExperiment()">
+                    Start Experiment
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     PRACTICE SCREEN
+====================================================== -->
+
+<div id="practice" class="hidden">
+
+    <h1>Practice Round</h1>
+
+    <div class="progress"
+         id="practiceProgress">
+        Practice Trial 1 / 10
+    </div>
+
+    <div class="stats">
+
+        <span>
+            Errors:
+            <span id="practiceErrors"
+                  class="error">
+                0
+            </span>
+        </span>
+
+    </div>
+
+    <div id="practiceArea"
+         style="
+         width:100%;
+         max-width:1000px;
+         height:550px;
+         margin:20px auto;
+         background:white;
+         border:2px solid #bbb;
+         position:relative;
+         overflow:hidden;
+         cursor:crosshair;
+         ">
+    </div>
+
+    <div id="practiceMessage"
+         class="center">
+        Move your mouse to the grey dot.
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     EXPERIMENT SCREEN
+====================================================== -->
+
+<div id="experiment" class="hidden">
+
+    <h1>Fitts' Law Experiment</h1>
+
+    <div class="progress"
+         id="trialProgress">
+        Trial 1 / 100
+    </div>
+
+    <div class="stats">
+
+        <span>
+            Errors:
+            <span id="errorCount"
+                  class="error">
+                0
+            </span>
+        </span>
+
+    </div>
+
+    <div id="message">
+        Move your mouse to the grey dot.
+    </div>
+
+    <div id="experimentArea">
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FINISHED SCREEN
+====================================================== -->
+
+<div id="finished"
+     class="hidden">
+
+    <h1>Experiment Complete!</h1>
+
+    <div class="card">
+
+        <p>
+            Thank you for participating.
+        </p>
+
+        <p>
+            Your 100 experimental trials have been completed.
+        </p>
+
+        <p>
+            Your data has been saved.
+        </p>
+
+        <button onclick="downloadCSV()">
+            Download My Data
+        </button>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+// ==========================================================
+// EXPERIMENT SETTINGS
+// ==========================================================
+
+const TOTAL_TRIALS = 100;
+
+const PRACTICE_TRIALS = 10;
+
+const DISTANCES = [
+    100,
+    200,
+    300,
+    400
+];
+
+const SIZES = [
+    20,
+    40,
+    60,
+    80
+];
+
+const DIRECTIONS = [
+    "Left-to-Right",
+    "Right-to-Left"
+];
+
+
+// ==========================================================
+// GLOBAL VARIABLES
+// ==========================================================
+
+let participantID = "";
+
+let trialNumber = 0;
+
+let practiceNumber = 0;
+
+let isPractice = true;
+
+let currentDistance = 0;
+
+let currentSize = 0;
+
+let currentDirection = "";
+
+let targetX = 0;
+
+let targetY = 0;
+
+let startX = 0;
+
+let startY = 0;
+
+let targetElement = null;
+
+let startMarker = null;
+
+let activeArea = null;
+
+let waitingForStart = true;
+
+let timerStarted = false;
+
+let startTime = 0;
+
+let lastMouseX = null;
+
+let lastMouseY = null;
+
+let distanceTraveled = 0;
+
+let errors = 0;
+
+let collectedData = [];
+
+
+// ==========================================================
+// RANDOM CHOICE
+// ==========================================================
+
+function randomChoice(array) {
+
+    return array[
+        Math.floor(
+            Math.random() * array.length
+        )
+    ];
+
+}
+
+
+// ==========================================================
+// DISTANCE BETWEEN TWO POINTS
+// ==========================================================
+
+function pointDistance(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+    return Math.sqrt(
+
+        Math.pow(
+            x2 - x1,
+            2
+        )
+
+        +
+
+        Math.pow(
+            y2 - y1,
+            2
+        )
+
+    );
+
+}
+
+
+// ==========================================================
+// BEGIN EXPERIMENT
+// ==========================================================
+
+function beginExperiment() {
+
+    const input =
+        document
+        .getElementById(
+            "participantID"
+        );
+
+    participantID =
+        input.value.trim();
+
+
+    if (
+        participantID === ""
+    ) {
+
+        alert(
+            "Please enter your Participant ID."
+        );
+
+        return;
+
+    }
+
+
+    document
+        .getElementById(
+            "welcome"
+        )
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById(
+            "practice"
+        )
+        .classList
+        .remove("hidden");
+
+
+    practiceNumber = 0;
+
+    startPracticeTrial();
+
+}
+
+
+// ==========================================================
+// GENERATE TRIAL
+// ==========================================================
+
+function generateTrial(area) {
+
+    currentDistance =
+        randomChoice(
+            DISTANCES
+        );
+
+    currentSize =
+        randomChoice(
+            SIZES
+        );
+
+    currentDirection =
+        randomChoice(
+            DIRECTIONS
+        );
+
+
+    const width =
+        area.clientWidth;
+
+    const height =
+        area.clientHeight;
+
+
+    const margin = 70;
+
+    const targetRadius =
+        currentSize / 2;
+
+
+    /*
+       We use the same Y coordinate for the
+       start and target.
+
+       Therefore:
+
+       Distance = horizontal distance
+                  between starting point
+                  and target center.
+    */
+
+
+    currentDistance =
+        Math.min(
+            currentDistance,
+            width - 2 * margin - currentSize
+        );
+
+
+    if (
+        currentDirection ===
+        "Left-to-Right"
+    ) {
+
+        startX =
+            margin;
+
+        targetX =
+            startX +
+            currentDistance;
+
+    }
+
+    else {
+
+        startX =
+            width - margin;
+
+        targetX =
+            startX -
+            currentDistance;
+
+    }
+
+
+    startY =
+        height / 2;
+
+    targetY =
+        height / 2;
+
+
+    /*
+       Add a small random vertical displacement
+       while keeping the exact horizontal distance.
+    */
+
+    const maxVertical =
+        Math.min(
+            100,
+            height / 4
+        );
+
+    const verticalOffset =
+        (
+            Math.random() * 2 - 1
+        ) * maxVertical;
+
+
+    targetY =
+        Math.max(
+            margin + targetRadius,
+            Math.min(
+                height - margin - targetRadius,
+                startY + verticalOffset
+            )
+        );
+
+
+    /*
+       Because the target may have a vertical offset,
+       the actual Euclidean distance is no longer
+       exactly currentDistance.
+
+       Therefore we correct target X so that
+       Euclidean distance from start to target
+       remains exactly currentDistance.
+    */
+
+
+    const dy =
+        targetY - startY;
+
+
+    const horizontalComponent =
+        Math.sqrt(
+            Math.max(
+                0,
+                Math.pow(
+                    currentDistance,
+                    2
+                )
+                -
+                Math.pow(
+                    dy,
+                    2
+                )
+            )
+        );
+
+
+    if (
+        currentDirection ===
+        "Left-to-Right"
+    ) {
+
+        targetX =
+            startX +
+            horizontalComponent;
+
+    }
+
+    else {
+
+        targetX =
+            startX -
+            horizontalComponent;
+
+    }
+
+}
+
+
+// ==========================================================
+// PREPARE TRIAL
+// ==========================================================
+
+function prepareTrial(
+    area,
+    practice
+) {
+
+    activeArea = area;
+
+    area.innerHTML = "";
+
+
+    generateTrial(
+        area
+    );
+
+
+    // ------------------------------------------------------
+    // Create starting marker
+    // ------------------------------------------------------
+
+    startMarker =
+        document.createElement(
+            "div"
+        );
+
+    startMarker.id =
+        "startMarker";
+
+
+    startMarker.style.left =
+        startX + "px";
+
+
+    startMarker.style.top =
+        startY + "px";
+
+
+    area.appendChild(
+        startMarker
+    );
+
+
+    // ------------------------------------------------------
+    // Reset measurements
+    // ------------------------------------------------------
+
+    waitingForStart = true;
+
+    timerStarted = false;
+
+    startTime = 0;
+
+    lastMouseX = null;
+
+    lastMouseY = null;
+
+    distanceTraveled = 0;
+
+    errors = 0;
+
+
+    // ------------------------------------------------------
+    // Update display
+    // ------------------------------------------------------
+
+    if (practice) {
+
+        document
+            .getElementById(
+                "practiceErrors"
+            )
+            .innerText = "0";
+
+        document
+            .getElementById(
+                "practiceMessage"
+            )
+            .innerText =
+            "Move your mouse to the grey dot.";
+
+    }
+
+    else {
+
+        document
+            .getElementById(
+                "errorCount"
+            )
+            .innerText = "0";
+
+        document
+            .getElementById(
+                "message"
+            )
+            .innerText =
+            "Move your mouse to the grey dot.";
+
+    }
+
+
+    // ------------------------------------------------------
+    // Mouse movement listener
+    // ------------------------------------------------------
+
+    area.onmousemove =
+        function(event) {
+
+            handleMouseMove(
+                event,
+                practice
+            );
+
+        };
+
+
+    area.onmousedown =
+        function(event) {
+
+            handleMouseClick(
+                event,
+                practice
+            );
+
+        };
+
+}
+
+
+// ==========================================================
+// MOUSE MOVEMENT
+// ==========================================================
+
+function handleMouseMove(
+    event,
+    practice
+) {
+
+    const rect =
+        activeArea
+        .getBoundingClientRect();
+
+
+    const x =
+        event.clientX -
+        rect.left;
+
+
+    const y =
+        event.clientY -
+        rect.top;
+
+
+    // ------------------------------------------------------
+    // Participant has reached starting position
+    // ------------------------------------------------------
+
+    if (
+        waitingForStart
+    ) {
+
+        const distanceToStart =
+            pointDistance(
+                x,
+                y,
+                startX,
+                startY
+            );
+
+
+        if (
+            distanceToStart <= 15
+        ) {
+
+            waitingForStart = false;
+
+
+            /*
+               Now reveal the target.
+
+               This is important because it means
+               the participant starts each task
+               from a known position.
+            */
+
+            showTarget(
+                activeArea
+            );
+
+
+            /*
+               Timer begins with the participant's
+               first movement after the target appears.
+            */
+
+            timerStarted = false;
+
+            lastMouseX = x;
+
+            lastMouseY = y;
+
+
+            if (practice) {
+
+                document
+                    .getElementById(
+                        "practiceMessage"
+                    )
+                    .innerText =
+                    "Click the blue square!";
+
+            }
+
+            else {
+
+                document
+                    .getElementById(
+                        "message"
+                    )
+                    .innerText =
+                    "Click the blue square!";
+
+            }
+
+            return;
+
+        }
+
+    }
+
+
+    // ------------------------------------------------------
+    // Actual movement measurement
+    // ------------------------------------------------------
+
+    if (
+        !waitingForStart
+    ) {
+
+        if (
+            !timerStarted
+        ) {
+
+            startTime =
+                performance.now();
+
+            timerStarted = true;
+
+            lastMouseX = x;
+
+            lastMouseY = y;
+
+            return;
+
+        }
+
+
+        distanceTraveled +=
+            pointDistance(
+                lastMouseX,
+                lastMouseY,
+                x,
+                y
+            );
+
+
+        lastMouseX = x;
+
+        lastMouseY = y;
+
+    }
+
+}
+
+
+// ==========================================================
+// SHOW TARGET
+// ==========================================================
+
+function showTarget(area) {
+
+    targetElement =
+        document.createElement(
+            "div"
+        );
+
+    targetElement.id =
+        "target";
+
+
+    targetElement.style.width =
+        currentSize + "px";
+
+
+    targetElement.style.height =
+        currentSize + "px";
+
+
+    targetElement.style.left =
+        (
+            targetX -
+            currentSize / 2
+        ) + "px";
+
+
+    targetElement.style.top =
+        (
+            targetY -
+            currentSize / 2
+        ) + "px";
+
+
+    area.appendChild(
+        targetElement
+    );
+
+}
+
+
+// ==========================================================
+// HANDLE CLICK
+// ==========================================================
+
+function handleMouseClick(
+    event,
+    practice
+) {
+
+    // Ignore clicks before target appears.
+
+    if (
+        waitingForStart
+        ||
+        !targetElement
+    ) {
+
+        return;
+
+    }
+
+
+    const rect =
+        activeArea
+        .getBoundingClientRect();
+
+
+    const x =
+        event.clientX -
+        rect.left;
+
+
+    const y =
+        event.clientY -
+        rect.top;
+
+
+    const left =
+        targetX -
+        currentSize / 2;
+
+
+    const right =
+        targetX +
+        currentSize / 2;
+
+
+    const top =
+        targetY -
+        currentSize / 2;
+
+
+    const bottom =
+        targetY +
+        currentSize / 2;
+
+
+    const correct =
+        x >= left &&
+        x <= right &&
+        y >= top &&
+        y <= bottom;
+
+
+    // ------------------------------------------------------
+    // WRONG CLICK
+    // ------------------------------------------------------
+
+    if (!correct) {
+
+        errors++;
+
+
+        if (practice) {
+
+            document
+                .getElementById(
+                    "practiceErrors"
+                )
+                .innerText =
+                errors;
+
+        }
+
+        else {
+
+            document
+                .getElementById(
+                    "errorCount"
+                )
+                .innerText =
+                errors;
+
+        }
+
+        return;
+
+    }
+
+
+    // ------------------------------------------------------
+    // CORRECT CLICK
+    // ------------------------------------------------------
+
+    let movementTime;
+
+
+    if (timerStarted) {
+
+        movementTime =
+            performance.now() -
+            startTime;
+
+    }
+
+    else {
+
+        movementTime = 0;
+
+    }
+
+
+    if (practice) {
+
+        finishPracticeTrial();
+
+    }
+
+    else {
+
+        finishExperimentalTrial(
+            movementTime
+        );
+
+    }
+
+}
+
+
+// ==========================================================
+// FINISH PRACTICE TRIAL
+// ==========================================================
+
+function finishPracticeTrial() {
+
+    practiceNumber++;
+
+
+    activeArea.onmousemove = null;
+
+    activeArea.onmousedown = null;
+
+
+    targetElement = null;
+
+
+    setTimeout(
+        function() {
+
+            if (
+                practiceNumber >=
+                PRACTICE_TRIALS
+            ) {
+
+                // Move to actual experiment
+
+                document
+                    .getElementById(
+                        "practice"
+                    )
+                    .classList
+                    .add("hidden");
+
+
+                document
+                    .getElementById(
+                        "experiment"
+                    )
+                    .classList
+                    .remove("hidden");
+
+
+                trialNumber = 0;
+
+                startExperimentalTrial();
+
+            }
+
+            else {
+
+                startPracticeTrial();
+
+            }
+
+        },
+        200
+    );
+
+}
+
+
+// ==========================================================
+// START PRACTICE TRIAL
+// ==========================================================
+
+function startPracticeTrial() {
+
+    document
+        .getElementById(
+            "practiceProgress"
+        )
+        .innerText =
+        "Practice Trial " +
+        (practiceNumber + 1) +
+        " / " +
+        PRACTICE_TRIALS;
+
+
+    prepareTrial(
+        document.getElementById(
+            "practiceArea"
+        ),
+        true
+    );
+
+}
+
+
+// ==========================================================
+// START EXPERIMENTAL TRIAL
+// ==========================================================
+
+function startExperimentalTrial() {
+
+    if (
+        trialNumber >=
+        TOTAL_TRIALS
+    ) {
+
+        finishExperiment();
+
+        return;
+
+    }
+
+
+    trialNumber++;
+
+
+    document
+        .getElementById(
+            "trialProgress"
+        )
+        .innerText =
+        "Trial " +
+        trialNumber +
+        " / " +
+        TOTAL_TRIALS;
+
+
+    prepareTrial(
+        document.getElementById(
+            "experimentArea"
+        ),
+        false
+    );
+
+}
+
+
+// ==========================================================
+// FINISH EXPERIMENTAL TRIAL
+// ==========================================================
+
+function finishExperimentalTrial(
+    movementTime
+) {
+
+    const row = {
+
+        Participant_ID:
+            participantID,
+
+        Trial:
+            trialNumber,
+
+        Distance:
+            Number(
+                currentDistance.toFixed(2)
+            ),
+
+        Size:
+            currentSize,
+
+        Direction:
+            currentDirection,
+
+        Time:
+            Number(
+                movementTime.toFixed(2)
+            ),
+
+        Distance_Traveled:
+            Number(
+                distanceTraveled.toFixed(2)
+            ),
+
+        Errors:
+            errors
+
+    };
+
+
+    // Add row to local dataset
+
+    collectedData.push(
+        row
+    );
+
+
+    /*
+       Later, we can send this row automatically
+       to your central Google Sheet.
+    */
+
+    console.log(
+        "Trial recorded:",
+        row
+    );
+
+
+    activeArea.onmousemove = null;
+
+    activeArea.onmousedown = null;
+
+    targetElement = null;
+
+
+    setTimeout(
+        function() {
+
+            startExperimentalTrial();
+
+        },
+        200
+    );
+
+}
+
+
+// ==========================================================
+// FINISH EXPERIMENT
+// ==========================================================
+
+function finishExperiment() {
+
+    document
+        .getElementById(
+            "experiment"
+        )
+        .classList
+        .add("hidden");
+
+
+    document
+        .getElementById(
+            "finished"
+        )
+        .classList
+        .remove("hidden");
+
+
+    console.log(
+        "Experiment complete."
+    );
+
+
+    console.log(
+        "Collected rows:",
+        collectedData.length
+    );
+
+}
+
+
+// ==========================================================
+// DOWNLOAD CSV
+// ==========================================================
+
+function downloadCSV() {
+
+    if (
+        collectedData.length === 0
+    ) {
+
+        alert(
+            "No data available."
+        );
+
+        return;
+
+    }
+
+
+    const headers = [
+
+        "Participant_ID",
+        "Trial",
+        "Distance",
+        "Size",
+        "Direction",
+        "Time",
+        "Distance_Traveled",
+        "Errors"
+
+    ];
+
+
+    let csv =
+        headers.join(",") +
+        "\n";
+
+
+    collectedData.forEach(
+        function(row) {
+
+            csv += [
+
+                row.Participant_ID,
+                row.Trial,
+                row.Distance,
+                row.Size,
+                row.Direction,
+                row.Time,
+                row.Distance_Traveled,
+                row.Errors
+
+            ].join(",") + "\n";
+
+        }
+    );
+
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type: "text/csv"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href = url;
+
+
+    link.download =
+        participantID +
+        "_fitts_law_data.csv";
+
+
+    document
+        .body
+        .appendChild(
+            link
+        );
+
+
+    link.click();
+
+
+    document
+        .body
+        .removeChild(
+            link
+        );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+</script>
+
+</body>
+</html>
