@@ -2,170 +2,307 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Fitts' Law Experiment</title>
 
+
 <style>
+
+/* =========================================================
+   GENERAL
+========================================================= */
 
 * {
     box-sizing: border-box;
 }
 
 body {
+
     margin: 0;
+
     font-family: Arial, sans-serif;
+
     background: #f4f6f8;
+
     color: #222;
+
 }
 
 .container {
+
     max-width: 1100px;
+
     margin: auto;
+
     padding: 25px;
-}
 
-h1 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-h2 {
-    text-align: center;
-}
-
-.card {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 3px 15px rgba(0,0,0,0.10);
-    max-width: 800px;
-    margin: 30px auto;
-}
-
-input {
-    width: 100%;
-    padding: 13px;
-    font-size: 18px;
-    margin-top: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #bbb;
-    border-radius: 6px;
-}
-
-button {
-    padding: 13px 25px;
-    font-size: 17px;
-    border: none;
-    border-radius: 7px;
-    background: #2864dc;
-    color: white;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #1e4fb3;
-}
-
-.center {
-    text-align: center;
 }
 
 .hidden {
-    display: none;
+
+    display: none !important;
+
+}
+
+.center {
+
+    text-align: center;
+
+}
+
+
+/* =========================================================
+   WELCOME SCREEN
+========================================================= */
+
+.card {
+
+    background: white;
+
+    max-width: 800px;
+
+    margin: 40px auto;
+
+    padding: 35px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 3px 15px rgba(0,0,0,0.10);
+
+}
+
+h1 {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+}
+
+h2 {
+
+    text-align: center;
+
 }
 
 .instructions {
-    line-height: 1.6;
+
+    line-height: 1.7;
+
+}
+
+input {
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-top: 8px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #bbb;
+
+    border-radius: 6px;
+
+    font-size: 18px;
+
+}
+
+button {
+
+    background: #2864dc;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding: 13px 25px;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+}
+
+button:hover {
+
+    background: #1e4fb3;
+
+}
+
+
+/* =========================================================
+   EXPERIMENT INFORMATION
+========================================================= */
+
+.progress {
+
+    text-align: center;
+
+    font-size: 18px;
+
+    margin: 10px;
+
 }
 
 .stats {
+
     display: flex;
+
     justify-content: center;
-    gap: 40px;
-    margin: 15px 0;
+
+    gap: 50px;
+
     font-size: 18px;
+
+    margin: 15px;
+
 }
 
 .error {
+
     color: #c62828;
+
     font-weight: bold;
-}
 
-#experimentArea {
-    width: 100%;
-    max-width: 1000px;
-    height: 550px;
-    margin: 20px auto;
-    background: white;
-    border: 2px solid #bbb;
-    position: relative;
-    overflow: hidden;
-    cursor: crosshair;
-}
-
-#startMarker {
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    background: #555;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-}
-
-#target {
-    position: absolute;
-    background: #2864dc;
-    border: 2px solid #17489c;
-    cursor: crosshair;
 }
 
 #message {
+
     text-align: center;
+
+    min-height: 30px;
+
     font-size: 18px;
+
     margin: 10px;
-    min-height: 25px;
+
 }
+
+
+/* =========================================================
+   EXPERIMENT AREA
+========================================================= */
+
+.experiment-area {
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    height: 550px;
+
+    margin: 20px auto;
+
+    background: white;
+
+    border: 2px solid #bbb;
+
+    position: relative;
+
+    overflow: hidden;
+
+    cursor: crosshair;
+
+}
+
+
+/* =========================================================
+   START MARKER
+========================================================= */
+
+.start-marker {
+
+    position: absolute;
+
+    width: 14px;
+
+    height: 14px;
+
+    background: #555;
+
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+}
+
+
+/* =========================================================
+   TARGET
+========================================================= */
+
+.target {
+
+    position: absolute;
+
+    background: #2864dc;
+
+    border: 2px solid #17489c;
+
+    cursor: crosshair;
+
+}
+
+
+/* =========================================================
+   FINISHED SCREEN
+========================================================= */
 
 #finished {
-    text-align: center;
-    padding: 80px 20px;
-}
 
-.progress {
     text-align: center;
-    font-size: 17px;
-    margin: 10px;
+
+    padding-top: 80px;
+
 }
 
 </style>
+
 </head>
 
 
 <body>
 
+
 <div class="container">
 
 
-<!-- =====================================================
+<!-- =======================================================
      WELCOME SCREEN
-====================================================== -->
+======================================================= -->
 
 <div id="welcome">
 
     <div class="card">
 
-        <h1>Fitts' Law Experiment</h1>
+        <h1>
+            Fitts' Law Experiment
+        </h1>
+
 
         <div class="instructions">
 
             <p>
-                This experiment investigates how target size
-                and target distance affect mouse movement time.
+                This experiment investigates the relationship
+                between target size, target distance and
+                mouse movement time.
             </p>
 
-            <h3>Instructions</h3>
+
+            <h3>
+                Instructions
+            </h3>
+
 
             <ol>
 
@@ -174,16 +311,18 @@ button:hover {
                 </li>
 
                 <li>
-                    The practice trials will not be recorded.
+                    Practice trials will not be included
+                    in the final dataset.
                 </li>
 
                 <li>
-                    You will then complete 100 experimental trials.
+                    You will then complete 100 experimental
+                    trials.
                 </li>
 
                 <li>
-                    A small grey dot will indicate where to
-                    position your mouse.
+                    A grey dot will indicate the starting
+                    position of your mouse.
                 </li>
 
                 <li>
@@ -191,12 +330,16 @@ button:hover {
                 </li>
 
                 <li>
-                    Once the blue target appears, move to it
-                    as quickly and accurately as possible.
+                    A blue square will then appear.
                 </li>
 
                 <li>
-                    Clicking outside the blue target counts
+                    Click the blue square as quickly and
+                    accurately as possible.
+                </li>
+
+                <li>
+                    Clicking outside the square counts
                     as an error.
                 </li>
 
@@ -206,28 +349,42 @@ button:hover {
 
             </ol>
 
+
             <p>
+
                 <strong>
-                    Please do not refresh or close the page
-                    during the experiment.
+                    Please do not refresh or close the
+                    browser during the experiment.
                 </strong>
+
             </p>
 
+
             <label>
-                <strong>Participant ID</strong>
+
+                <strong>
+                    Participant ID
+                </strong>
+
             </label>
 
+
             <input
-                type="text"
                 id="participantID"
+                type="text"
                 placeholder="Example: P01"
                 maxlength="20"
             >
 
+
             <div class="center">
 
-                <button onclick="beginExperiment()">
+                <button
+                    onclick="beginExperiment()"
+                >
+
                     Start Experiment
+
                 </button>
 
             </div>
@@ -239,97 +396,145 @@ button:hover {
 </div>
 
 
-<!-- =====================================================
+
+<!-- =======================================================
      PRACTICE SCREEN
-====================================================== -->
+======================================================= -->
 
-<div id="practice" class="hidden">
-
-    <h1>Practice Round</h1>
-
-    <div class="progress"
-         id="practiceProgress">
-        Practice Trial 1 / 10
-    </div>
-
-    <div class="stats">
-
-        <span>
-            Errors:
-            <span id="practiceErrors"
-                  class="error">
-                0
-            </span>
-        </span>
-
-    </div>
-
-    <div id="practiceArea"
-         style="
-         width:100%;
-         max-width:1000px;
-         height:550px;
-         margin:20px auto;
-         background:white;
-         border:2px solid #bbb;
-         position:relative;
-         overflow:hidden;
-         cursor:crosshair;
-         ">
-    </div>
-
-    <div id="practiceMessage"
-         class="center">
-        Move your mouse to the grey dot.
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     EXPERIMENT SCREEN
-====================================================== -->
-
-<div id="experiment" class="hidden">
-
-    <h1>Fitts' Law Experiment</h1>
-
-    <div class="progress"
-         id="trialProgress">
-        Trial 1 / 100
-    </div>
-
-    <div class="stats">
-
-        <span>
-            Errors:
-            <span id="errorCount"
-                  class="error">
-                0
-            </span>
-        </span>
-
-    </div>
-
-    <div id="message">
-        Move your mouse to the grey dot.
-    </div>
-
-    <div id="experimentArea">
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     FINISHED SCREEN
-====================================================== -->
-
-<div id="finished"
+<div id="practice"
      class="hidden">
 
-    <h1>Experiment Complete!</h1>
+
+    <h1>
+        Practice Round
+    </h1>
+
+
+    <div
+        id="practiceProgress"
+        class="progress"
+    >
+
+        Practice Trial 1 / 10
+
+    </div>
+
+
+    <div class="stats">
+
+        <span>
+
+            Errors:
+
+            <span
+                id="practiceErrors"
+                class="error"
+            >
+                0
+            </span>
+
+        </span>
+
+    </div>
+
+
+    <div
+        id="practiceMessage"
+        class="center"
+    >
+
+        Move your mouse to the grey dot.
+
+    </div>
+
+
+    <div
+        id="practiceArea"
+        class="experiment-area"
+    >
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     ACTUAL EXPERIMENT
+======================================================= -->
+
+<div id="experiment"
+     class="hidden">
+
+
+    <h1>
+        Fitts' Law Experiment
+    </h1>
+
+
+    <div
+        id="trialProgress"
+        class="progress"
+    >
+
+        Trial 1 / 100
+
+    </div>
+
+
+    <div class="stats">
+
+        <span>
+
+            Errors:
+
+            <span
+                id="errorCount"
+                class="error"
+            >
+                0
+            </span>
+
+        </span>
+
+    </div>
+
+
+    <div
+        id="message"
+    >
+
+        Move your mouse to the grey dot.
+
+    </div>
+
+
+    <div
+        id="experimentArea"
+        class="experiment-area"
+    >
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     FINISHED SCREEN
+======================================================= -->
+
+<div
+    id="finished"
+    class="hidden"
+>
+
+    <h1>
+        Experiment Complete!
+    </h1>
+
 
     <div class="card">
 
@@ -337,16 +542,23 @@ button:hover {
             Thank you for participating.
         </p>
 
-        <p>
-            Your 100 experimental trials have been completed.
-        </p>
 
         <p>
-            Your data has been saved.
+            You have completed all 100 experimental trials.
         </p>
 
-        <button onclick="downloadCSV()">
+
+        <p>
+            Your data has been recorded.
+        </p>
+
+
+        <button
+            onclick="downloadCSV()"
+        >
+
             Download My Data
+
         </button>
 
     </div>
@@ -357,7 +569,20 @@ button:hover {
 </div>
 
 
+
 <script>
+
+
+// ==========================================================
+// GOOGLE APPS SCRIPT URL
+// ==========================================================
+//
+// This is YOUR Google Apps Script Web App URL.
+// ==========================================================
+
+const DATA_URL =
+"https://script.google.com/macros/s/AKfycbwkY4fkbv674TtXCeqX2QKnTdyXiAJv6nSIyVdBPUdYqxqp1v8adJ9-rv7fV7SJxxGrlA/exec";
+
 
 // ==========================================================
 // EXPERIMENT SETTINGS
@@ -399,11 +624,17 @@ let practiceNumber = 0;
 
 let isPractice = true;
 
+
+// Current trial conditions
+
 let currentDistance = 0;
 
 let currentSize = 0;
 
 let currentDirection = "";
+
+
+// Coordinates
 
 let targetX = 0;
 
@@ -413,11 +644,17 @@ let startX = 0;
 
 let startY = 0;
 
+
+// DOM elements
+
+let activeArea = null;
+
 let targetElement = null;
 
 let startMarker = null;
 
-let activeArea = null;
+
+// Measurement variables
 
 let waitingForStart = true;
 
@@ -432,6 +669,9 @@ let lastMouseY = null;
 let distanceTraveled = 0;
 
 let errors = 0;
+
+
+// Local backup
 
 let collectedData = [];
 
@@ -452,7 +692,7 @@ function randomChoice(array) {
 
 
 // ==========================================================
-// DISTANCE BETWEEN TWO POINTS
+// CALCULATE EUCLIDEAN DISTANCE
 // ==========================================================
 
 function pointDistance(
@@ -487,14 +727,13 @@ function pointDistance(
 
 function beginExperiment() {
 
-    const input =
+    participantID =
         document
         .getElementById(
             "participantID"
-        );
-
-    participantID =
-        input.value.trim();
+        )
+        .value
+        .trim();
 
 
     if (
@@ -544,10 +783,12 @@ function generateTrial(area) {
             DISTANCES
         );
 
+
     currentSize =
         randomChoice(
             SIZES
         );
+
 
     currentDirection =
         randomChoice(
@@ -558,32 +799,78 @@ function generateTrial(area) {
     const width =
         area.clientWidth;
 
+
     const height =
         area.clientHeight;
 
 
-    const margin = 70;
+    /*
+       Target must remain inside the experiment area.
+    */
 
-    const targetRadius =
+    const margin = 80;
+
+    const radius =
         currentSize / 2;
 
 
     /*
-       We use the same Y coordinate for the
-       start and target.
-
-       Therefore:
-
-       Distance = horizontal distance
-                  between starting point
-                  and target center.
+       Choose a starting point and target such that
+       the Euclidean distance between them is EXACTLY
+       the selected Distance.
     */
 
 
-    currentDistance =
+    startY =
+        height / 2;
+
+
+    /*
+       Choose a random vertical component.
+
+       It must be smaller than Distance so that
+       we can calculate the horizontal component.
+    */
+
+    const maximumVertical =
         Math.min(
-            currentDistance,
-            width - 2 * margin - currentSize
+            100,
+            currentDistance * 0.5
+        );
+
+
+    const verticalOffset =
+        (
+            Math.random() * 2 - 1
+        ) * maximumVertical;
+
+
+    targetY =
+        startY +
+        verticalOffset;
+
+
+    /*
+       Calculate horizontal component using:
+
+       D² = X² + Y²
+    */
+
+    const horizontalComponent =
+        Math.sqrt(
+
+            Math.pow(
+                currentDistance,
+                2
+            )
+
+            -
+
+            Math.pow(
+                verticalOffset,
+                2
+            )
+
         );
 
 
@@ -592,12 +879,11 @@ function generateTrial(area) {
         "Left-to-Right"
     ) {
 
-        startX =
-            margin;
+        startX = margin;
 
         targetX =
             startX +
-            currentDistance;
+            horizontalComponent;
 
     }
 
@@ -608,93 +894,58 @@ function generateTrial(area) {
 
         targetX =
             startX -
-            currentDistance;
+            horizontalComponent;
 
     }
 
 
-    startY =
-        height / 2;
-
-    targetY =
-        height / 2;
-
-
     /*
-       Add a small random vertical displacement
-       while keeping the exact horizontal distance.
+       Safety check.
+
+       If the target would be outside the area,
+       use a centered horizontal arrangement.
     */
-
-    const maxVertical =
-        Math.min(
-            100,
-            height / 4
-        );
-
-    const verticalOffset =
-        (
-            Math.random() * 2 - 1
-        ) * maxVertical;
-
-
-    targetY =
-        Math.max(
-            margin + targetRadius,
-            Math.min(
-                height - margin - targetRadius,
-                startY + verticalOffset
-            )
-        );
-
-
-    /*
-       Because the target may have a vertical offset,
-       the actual Euclidean distance is no longer
-       exactly currentDistance.
-
-       Therefore we correct target X so that
-       Euclidean distance from start to target
-       remains exactly currentDistance.
-    */
-
-
-    const dy =
-        targetY - startY;
-
-
-    const horizontalComponent =
-        Math.sqrt(
-            Math.max(
-                0,
-                Math.pow(
-                    currentDistance,
-                    2
-                )
-                -
-                Math.pow(
-                    dy,
-                    2
-                )
-            )
-        );
-
 
     if (
-        currentDirection ===
-        "Left-to-Right"
+        targetX - radius < 0
+        ||
+        targetX + radius > width
+        ||
+        targetY - radius < 0
+        ||
+        targetY + radius > height
     ) {
 
-        targetX =
-            startX +
-            horizontalComponent;
+        startY =
+            height / 2;
 
-    }
+        targetY =
+            startY;
 
-    else {
 
-        targetX =
-            startX -
-            horizontalComponent;
+        if (
+            currentDirection ===
+            "Left-to-Right"
+        ) {
+
+            startX = margin;
+
+            targetX =
+                startX +
+                currentDistance;
+
+        }
+
+        else {
+
+            startX =
+                width - margin;
+
+            targetX =
+                startX -
+                currentDistance;
+
+        }
 
     }
 
@@ -712,43 +963,22 @@ function prepareTrial(
 
     activeArea = area;
 
+
     area.innerHTML = "";
 
+
+    /*
+       Generate randomized conditions.
+    */
 
     generateTrial(
         area
     );
 
 
-    // ------------------------------------------------------
-    // Create starting marker
-    // ------------------------------------------------------
-
-    startMarker =
-        document.createElement(
-            "div"
-        );
-
-    startMarker.id =
-        "startMarker";
-
-
-    startMarker.style.left =
-        startX + "px";
-
-
-    startMarker.style.top =
-        startY + "px";
-
-
-    area.appendChild(
-        startMarker
-    );
-
-
-    // ------------------------------------------------------
-    // Reset measurements
-    // ------------------------------------------------------
+    /*
+       Reset measurement variables.
+    */
 
     waitingForStart = true;
 
@@ -765,9 +995,36 @@ function prepareTrial(
     errors = 0;
 
 
-    // ------------------------------------------------------
-    // Update display
-    // ------------------------------------------------------
+    /*
+       Create grey starting marker.
+    */
+
+    startMarker =
+        document.createElement(
+            "div"
+        );
+
+
+    startMarker.className =
+        "start-marker";
+
+
+    startMarker.style.left =
+        startX + "px";
+
+
+    startMarker.style.top =
+        startY + "px";
+
+
+    area.appendChild(
+        startMarker
+    );
+
+
+    /*
+       Update error display.
+    */
 
     if (practice) {
 
@@ -804,9 +1061,9 @@ function prepareTrial(
     }
 
 
-    // ------------------------------------------------------
-    // Mouse movement listener
-    // ------------------------------------------------------
+    /*
+       Listen for mouse movement.
+    */
 
     area.onmousemove =
         function(event) {
@@ -818,6 +1075,10 @@ function prepareTrial(
 
         };
 
+
+    /*
+       Listen for clicks.
+    */
 
     area.onmousedown =
         function(event) {
@@ -833,7 +1094,7 @@ function prepareTrial(
 
 
 // ==========================================================
-// MOUSE MOVEMENT
+// HANDLE MOUSE MOVEMENT
 // ==========================================================
 
 function handleMouseMove(
@@ -856,9 +1117,10 @@ function handleMouseMove(
         rect.top;
 
 
-    // ------------------------------------------------------
-    // Participant has reached starting position
-    // ------------------------------------------------------
+    /*
+       STEP 1:
+       Participant must first move to the starting marker.
+    */
 
     if (
         waitingForStart
@@ -881,11 +1143,8 @@ function handleMouseMove(
 
 
             /*
-               Now reveal the target.
-
-               This is important because it means
-               the participant starts each task
-               from a known position.
+               Show the target only after the participant
+               reaches the starting point.
             */
 
             showTarget(
@@ -894,8 +1153,7 @@ function handleMouseMove(
 
 
             /*
-               Timer begins with the participant's
-               first movement after the target appears.
+               Reset movement tracking.
             */
 
             timerStarted = false;
@@ -934,13 +1192,18 @@ function handleMouseMove(
     }
 
 
-    // ------------------------------------------------------
-    // Actual movement measurement
-    // ------------------------------------------------------
+    /*
+       STEP 2:
+       Measure actual movement after target appears.
+    */
 
     if (
         !waitingForStart
     ) {
+
+        /*
+           Start timer with first movement.
+        */
 
         if (
             !timerStarted
@@ -959,6 +1222,11 @@ function handleMouseMove(
 
         }
 
+
+        /*
+           Add movement segment to total
+           Distance Traveled.
+        */
 
         distanceTraveled +=
             pointDistance(
@@ -989,7 +1257,8 @@ function showTarget(area) {
             "div"
         );
 
-    targetElement.id =
+
+    targetElement.className =
         "target";
 
 
@@ -1023,7 +1292,7 @@ function showTarget(area) {
 
 
 // ==========================================================
-// HANDLE CLICK
+// HANDLE MOUSE CLICK
 // ==========================================================
 
 function handleMouseClick(
@@ -1031,7 +1300,9 @@ function handleMouseClick(
     practice
 ) {
 
-    // Ignore clicks before target appears.
+    /*
+       Ignore clicks before target appears.
+    */
 
     if (
         waitingForStart
@@ -1059,6 +1330,10 @@ function handleMouseClick(
         rect.top;
 
 
+    /*
+       Calculate target boundaries.
+    */
+
     const left =
         targetX -
         currentSize / 2;
@@ -1080,15 +1355,18 @@ function handleMouseClick(
 
 
     const correct =
-        x >= left &&
-        x <= right &&
-        y >= top &&
+        x >= left
+        &&
+        x <= right
+        &&
+        y >= top
+        &&
         y <= bottom;
 
 
-    // ------------------------------------------------------
-    // WRONG CLICK
-    // ------------------------------------------------------
+    /*
+       WRONG CLICK
+    */
 
     if (!correct) {
 
@@ -1117,16 +1395,17 @@ function handleMouseClick(
 
         }
 
+
         return;
 
     }
 
 
-    // ------------------------------------------------------
-    // CORRECT CLICK
-    // ------------------------------------------------------
+    /*
+       CORRECT CLICK
+    */
 
-    let movementTime;
+    let movementTime = 0;
 
 
     if (timerStarted) {
@@ -1134,12 +1413,6 @@ function handleMouseClick(
         movementTime =
             performance.now() -
             startTime;
-
-    }
-
-    else {
-
-        movementTime = 0;
 
     }
 
@@ -1174,7 +1447,6 @@ function finishPracticeTrial() {
 
     activeArea.onmousedown = null;
 
-
     targetElement = null;
 
 
@@ -1185,8 +1457,6 @@ function finishPracticeTrial() {
                 practiceNumber >=
                 PRACTICE_TRIALS
             ) {
-
-                // Move to actual experiment
 
                 document
                     .getElementById(
@@ -1205,6 +1475,7 @@ function finishPracticeTrial() {
 
 
                 trialNumber = 0;
+
 
                 startExperimentalTrial();
 
@@ -1235,7 +1506,9 @@ function startPracticeTrial() {
         )
         .innerText =
         "Practice Trial " +
-        (practiceNumber + 1) +
+        (
+            practiceNumber + 1
+        ) +
         " / " +
         PRACTICE_TRIALS;
 
@@ -1251,10 +1524,14 @@ function startPracticeTrial() {
 
 
 // ==========================================================
-// START EXPERIMENTAL TRIAL
+// START ACTUAL TRIAL
 // ==========================================================
 
 function startExperimentalTrial() {
+
+    /*
+       All 100 trials completed.
+    */
 
     if (
         trialNumber >=
@@ -1300,6 +1577,10 @@ function finishExperimentalTrial(
     movementTime
 ) {
 
+    /*
+       Create one complete dataset row.
+    */
+
     const row = {
 
         Participant_ID:
@@ -1335,7 +1616,9 @@ function finishExperimentalTrial(
     };
 
 
-    // Add row to local dataset
+    /*
+       Keep local backup.
+    */
 
     collectedData.push(
         row
@@ -1343,15 +1626,17 @@ function finishExperimentalTrial(
 
 
     /*
-       Later, we can send this row automatically
-       to your central Google Sheet.
+       Send to Google Sheets.
     */
 
-    console.log(
-        "Trial recorded:",
+    sendData(
         row
     );
 
+
+    /*
+       Remove event listeners.
+    */
 
     activeArea.onmousemove = null;
 
@@ -1360,6 +1645,10 @@ function finishExperimentalTrial(
     targetElement = null;
 
 
+    /*
+       Start next trial.
+    */
+
     setTimeout(
         function() {
 
@@ -1367,6 +1656,57 @@ function finishExperimentalTrial(
 
         },
         200
+    );
+
+}
+
+
+// ==========================================================
+// SEND DATA TO GOOGLE SHEETS
+// ==========================================================
+
+function sendData(row) {
+
+    fetch(
+        DATA_URL,
+        {
+
+            method: "POST",
+
+            mode: "no-cors",
+
+            headers: {
+
+                "Content-Type":
+                    "text/plain"
+
+            },
+
+            body:
+                JSON.stringify(
+                    row
+                )
+
+        }
+    )
+    .then(
+        function() {
+
+            console.log(
+                "Trial successfully sent."
+            );
+
+        }
+    )
+    .catch(
+        function(error) {
+
+            console.error(
+                "Data submission failed:",
+                error
+            );
+
+        }
     );
 
 }
@@ -1395,12 +1735,12 @@ function finishExperiment() {
 
 
     console.log(
-        "Experiment complete."
+        "Experiment completed."
     );
 
 
     console.log(
-        "Collected rows:",
+        "Rows collected:",
         collectedData.length
     );
 
@@ -1408,7 +1748,7 @@ function finishExperiment() {
 
 
 // ==========================================================
-// DOWNLOAD CSV
+// DOWNLOAD LOCAL CSV BACKUP
 // ==========================================================
 
 function downloadCSV() {
@@ -1429,12 +1769,19 @@ function downloadCSV() {
     const headers = [
 
         "Participant_ID",
+
         "Trial",
+
         "Distance",
+
         "Size",
+
         "Direction",
+
         "Time",
+
         "Distance_Traveled",
+
         "Errors"
 
     ];
@@ -1451,12 +1798,19 @@ function downloadCSV() {
             csv += [
 
                 row.Participant_ID,
+
                 row.Trial,
+
                 row.Distance,
+
                 row.Size,
+
                 row.Direction,
+
                 row.Time,
+
                 row.Distance_Traveled,
+
                 row.Errors
 
             ].join(",") + "\n";
@@ -1520,4 +1874,5 @@ function downloadCSV() {
 </script>
 
 </body>
+
 </html>
